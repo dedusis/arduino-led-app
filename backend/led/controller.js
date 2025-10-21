@@ -5,6 +5,7 @@ const turnOnLED = async (req, res) => {
     if (err) {
       return res.status(500).send('Error turning on LED');
     }
+    console.log('Sending response: LED is ON');
     res.send('LED is ON');
   });
 };
@@ -14,6 +15,7 @@ const turnOffLED = async (req, res) => {
     if (err) {
       return res.status(500).send('Error turning off LED');
     }
+    console.log('Sending response: LED is OFF');
     res.send('LED is OFF');
   });
 };

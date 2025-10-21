@@ -7,17 +7,16 @@ import YAML from 'yamljs';
 import appRouter from './backend/routes/router.js';
 import { fileURLToPath } from 'url';
 import path from 'path';
+import cors from 'cors';
 
 // setup
 const app = express();
 const port = process.env.PORT || 5000;
 app.use(bodyParser.json());
 
-
-// frontend setup
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-app.use(express.static(path.join(__dirname, 'src/frontend')));
+app.use(cors({
+  origin: 'http://localhost:8100'
+}));
 
 
 app.use('/', appRouter);
@@ -33,5 +32,5 @@ swaggerDocs.servers = [
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.listen(port, '0.0.0.0', () => {
-    console.log(`Server is running at http://0.0.0.0:${port}`);
+    console.log(`Server is running at http://localhost:${port}`);
 });
