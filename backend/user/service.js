@@ -20,4 +20,4 @@ const createUser = async (data) => {
 
 export default {
     createUser
-};
+}

@@ -2,19 +2,25 @@ openapi: 3.0.0
 info:
   title: Arduino LED Control API
   version: 1.0.0
-  description: API για τον έλεγχο LED και διαχείριση χρηστών (Admin)
+  description: API για έλεγχο LED και διαχείριση χρηστών (Admin)
 
 servers:
   - url: http://localhost:5000
     description: Local server
 
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
 paths:
-  /user:
+  /auth/login:
     post:
-      summary: Δημιουργία νέου χρήστη
-      description: Δημιουργεί έναν νέο χρήστη με username, password και role
+      summary: Σύνδεση χρήστη
       tags:
-        - Users
+        - Auth
       requestBody:
         required: true
         content:
@@ -30,11 +36,94 @@ paths:
                   example: admin
                 password:
                   type: string
-                  example: 123456
+                  example: 1234
+      responses:
+        '200':
+          description: Επιστρέφει JWT token και στοιχεία χρήστη
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                      username:
+                        type: string
+                      role:
+                        type: string
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /auth/profile:
+    get:
+      summary: Προβολή προφίλ χρήστη
+      tags:
+        - Auth
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Επιστρέφει τα στοιχεία χρήστη χωρίς το password
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                  username:
+                    type: string
+                  role:
+                    type: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /user:
+    post:
+      summary: Δημιουργία νέου χρήστη (Admin)
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                  example: newuser
+                password:
+                  type: string
+                  example: 1234
                 role:
                   type: string
                   enum: [user, admin]
-                  example: admin
+                  example: user
       responses:
         '201':
           description: Ο χρήστης δημιουργήθηκε επιτυχώς
@@ -50,7 +139,7 @@ paths:
                   role:
                     type: string
         '400':
-          description: Σφάλμα κατά τη δημιουργία χρήστη
+          description: Σφάλμα δημιουργίας χρήστη
           content:
             application/json:
               schema:
@@ -58,13 +147,14 @@ paths:
                 properties:
                   error:
                     type: string
-                    example: Username already exists
 
   /led/on:
     get:
-      summary: Άναμμα του LED
+      summary: Άναμμα LED
       tags:
         - LED
+      security:
+        - bearerAuth: []
       responses:
         '200':
           description: LED άναψε
@@ -74,7 +164,7 @@ paths:
                 type: string
                 example: LED is ON
         '500':
-          description: Σφάλμα στο άναμμα του LED
+          description: Σφάλμα κατά το άναμμα
           content:
             text/plain:
               schema:
@@ -83,9 +173,11 @@ paths:
 
   /led/off:
     get:
-      summary: Σβήσιμο του LED
+      summary: Σβήσιμο LED
       tags:
         - LED
+      security:
+        - bearerAuth: []
       responses:
         '200':
           description: LED έσβησε
@@ -95,7 +187,7 @@ paths:
                 type: string
                 example: LED is OFF
         '500':
-          description: Σφάλμα στο σβήσιμο του LED
+          description: Σφάλμα κατά το σβήσιμο
           content:
             text/plain:
               schema:
