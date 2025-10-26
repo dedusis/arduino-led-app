@@ -1,7 +1,103 @@
 openapi: 3.0.0
 info:
-  title: Arduino LED API
+  title: Arduino LED Control API
   version: 1.0.0
+  description: API για τον έλεγχο LED και διαχείριση χρηστών (Admin)
+
 servers:
   - url: http://localhost:5000
+    description: Local server
+
 paths:
+  /user:
+    post:
+      summary: Δημιουργία νέου χρήστη
+      description: Δημιουργεί έναν νέο χρήστη με username, password και role
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                  example: admin
+                password:
+                  type: string
+                  example: 123456
+                role:
+                  type: string
+                  enum: [user, admin]
+                  example: admin
+      responses:
+        '201':
+          description: Ο χρήστης δημιουργήθηκε επιτυχώς
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                  username:
+                    type: string
+                  role:
+                    type: string
+        '400':
+          description: Σφάλμα κατά τη δημιουργία χρήστη
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Username already exists
+
+  /led/on:
+    get:
+      summary: Άναμμα του LED
+      tags:
+        - LED
+      responses:
+        '200':
+          description: LED άναψε
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: LED is ON
+        '500':
+          description: Σφάλμα στο άναμμα του LED
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Error turning on LED
+
+  /led/off:
+    get:
+      summary: Σβήσιμο του LED
+      tags:
+        - LED
+      responses:
+        '200':
+          description: LED έσβησε
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: LED is OFF
+        '500':
+          description: Σφάλμα στο σβήσιμο του LED
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Error turning off LED

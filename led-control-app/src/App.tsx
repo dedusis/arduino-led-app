@@ -12,7 +12,7 @@ import {
 import './theme/variables.css';
 import './main.css';
 
-const backendURL = 'http://192.168.1.215:5000/led';
+const backendURL = 'http://192.168.2.12:5000/led';
 
 const App: React.FC = () => {
   const [status, setStatus] = useState('');
