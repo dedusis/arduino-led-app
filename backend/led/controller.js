@@ -1,6 +1,11 @@
-import arduino from '../arduino/connection.js';
+import { arduino } from '../arduino/connection.js';
 
 const turnOnLED = async (req, res) => {
+
+  if (!arduino) {
+    return res.status(503).send('Serial not available');
+  }
+
   arduino.write('1', (err) => {
     if (err) {
       return res.status(500).send('Error turning on LED');
@@ -11,6 +16,11 @@ const turnOnLED = async (req, res) => {
 };
 
 const turnOffLED = async (req, res) => {
+  
+  if (!arduino) {
+    return res.status(503).send('Serial not available');
+  }
+
   arduino.write('0', (err) => {
     if (err) {
       return res.status(500).send('Error turning off LED');

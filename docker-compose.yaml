@@ -1,0 +1,30 @@
+services:
+  frontend:
+    build:
+      context: ./led-control-app
+      dockerfile: Dockerfile
+    container_name: led-frontend
+    ports:
+      - "8100:8100"
+    depends_on:
+      - mongo
+    environment:
+      - VITE_API_URL=http://host.docker.internal:5000
+    networks:
+      - lednet
+
+  mongo:
+    image: mongo:7
+    container_name: led-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - C:/data/db:/data/db
+    networks:
+      - lednet
+
+volumes:
+  mongo_data:
+
+networks:
+  lednet:

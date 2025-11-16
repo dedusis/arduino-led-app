@@ -15,7 +15,7 @@ import {
 import './theme/variables.css';
 import './main.css';
 
-const backendURL = 'http://192.168.2.12:5000'; // χωρίς /led, θα το προσθέσουμε δυναμικά
+const backendURL = 'http://192.168.1.215:5000'; 
 
 const App: React.FC = () => {
   const [username, setUsername] = useState('');
